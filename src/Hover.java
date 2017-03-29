@@ -12,6 +12,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class Hover {
 	public static void main(String[] args) throws IOException, InterruptedException {
+		//TODO Parse each part of the address
 
 		System.out.println("Loading Ecoles");
 		List<Ecole> ecoles = CSVScanner.getList();
@@ -30,26 +31,32 @@ public class Hover {
 
 		for(Ecole ecole : ecoles){
 
-			driver.get("http://www.google.fr");
-			Thread.sleep(1000);
-
-			WebElement searchBar = driver.findElement(By.className("gsfi"));
-			searchBar.sendKeys(ecole.getName() + " " + ecole.getType());
-			searchBar.sendKeys(Keys.RETURN);
-			Thread.sleep(2000);
-
-			try{
-				driver.findElement(By.cssSelector("a[href*='www.education.gouv.fr']")).click();
-	
-				Thread.sleep(3000);
-	
-				ecole.setPhone(driver.findElement(By.className("annuaire-etablissement-infos-part3")).getText());
-	
-				System.out.println(ecole.toString());
-				writer.write(ecole.toString());
+			if(ecole.getId() == null){
+				writer.write("");
+				System.out.println("Empty line");
 			}
-			catch(Exception e){
-				System.out.println("Not found : "+ecole.toString());
+			else{
+				driver.get("http://www.google.fr");
+				Thread.sleep(1000);
+	
+				WebElement searchBar = driver.findElement(By.className("gsfi"));
+				searchBar.sendKeys(ecole.getName() + " " + ecole.getType());
+				searchBar.sendKeys(Keys.RETURN);
+				Thread.sleep(2000);
+	
+				try{
+					driver.findElement(By.cssSelector("a[href*='www.education.gouv.fr']")).click();
+		
+					Thread.sleep(3000);
+		
+					ecole.setPhone(driver.findElement(By.className("annuaire-etablissement-infos-part3")).getText());
+		
+					System.out.println(ecole.toString());
+				}
+				catch(Exception e){
+					System.out.println("Not found : "+ecole.toString());
+				}
+				writer.write(ecole.toString());
 			}
 			
 			System.out.println("---------");
